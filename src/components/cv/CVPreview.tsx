@@ -112,10 +112,10 @@ export const CVPreview: React.FC<CVPreviewProps> = ({ data }) => {
         </>
       )}
 
-      {education && education.length > 0 && (
+      {education && education.filter(e => e.institution && e.degree).length > 0 && (
         <>
           <div className="cv-section-title">Education</div>
-          {education.map((edu, i) => (
+          {education.filter(e => e.institution && e.degree).map((edu, i) => (
             <div key={i} className="cv-job-entry" style={{ marginBottom: 0 }}>
               <div className="cv-job-title-row">
                 <span>{edu.degree}{edu.fieldOfStudy ? ` — ${edu.fieldOfStudy}` : ''}</span>

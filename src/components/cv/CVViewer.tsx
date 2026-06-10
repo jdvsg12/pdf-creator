@@ -67,7 +67,8 @@ function getHtmlContent(data: CVData): string {
       .join('')
     : '';
 
-  const eduHtml = data.education?.map(edu => `
+  const eduEntries = data.education?.filter(e => e.institution && e.degree) || [];
+  const eduHtml = eduEntries.map(edu => `
           <div class="job-entry" style="margin-bottom:0">
             <div class="job-title-row"><span>${edu.degree}${edu.fieldOfStudy ? ` — ${edu.fieldOfStudy}` : ''}</span><span>${edu.institution}${edu.location ? `, ${edu.location}` : ''}</span></div>
             <div style="font-size:9pt;color:#555;margin-bottom:6px">${formatDate(edu.startDate)}${edu.endDate ? ` – ${formatDate(edu.endDate)}` : ''}</div>
@@ -108,7 +109,7 @@ function getHtmlContent(data: CVData): string {
 
   ${skillsHtml ? `<div class="section-title">Skills</div><div class="profile-text">${skillsHtml}</div>` : ''}
 
-  ${data.education?.length ? `<div class="section-title">Education</div>${eduHtml}` : ''}
+  ${eduEntries.length ? `<div class="section-title">Education</div>${eduHtml}` : ''}
 </body>
 </html>`;
 }

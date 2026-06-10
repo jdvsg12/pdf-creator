@@ -76,6 +76,20 @@ export const EducationSection: React.FC<EducationSectionProps> = ({ data, onChan
     );
   }, [data.education]);
 
+  const syncEducation = (eduData: typeof education) => {
+    const mappedEducation = eduData.map(edu => ({
+      institution: edu.institution.trim(),
+      degree: edu.degree.trim(),
+      fieldOfStudy: edu.fieldOfStudy.trim() || undefined,
+      startDate: edu.startDate.trim(),
+      endDate: edu.isPresent ? null : (edu.endDate || null),
+      location: edu.location.trim() || undefined
+    }));
+    if (onChange) {
+      onChange({ education: mappedEducation });
+    }
+  };
+
   const handleAddEducation = () => {
     setEducation([...education, {
       institution: '',
@@ -92,12 +106,14 @@ export const EducationSection: React.FC<EducationSectionProps> = ({ data, onChan
     const newEducation = [...education];
     newEducation.splice(index, 1);
     setEducation(newEducation);
+    syncEducation(newEducation);
   };
 
   const handleEduChange = (index: number, field: 'institution' | 'degree' | 'fieldOfStudy' | 'location', value: string) => {
     const newEducation = [...education];
     newEducation[index][field] = value;
     setEducation(newEducation);
+    syncEducation(newEducation);
   };
 
   const handleDateChange = (index: number, field: 'startDate' | 'endDate', month: string, year: string) => {
@@ -110,6 +126,7 @@ export const EducationSection: React.FC<EducationSectionProps> = ({ data, onChan
       newEducation[index].startDate = formatted;
     }
     setEducation(newEducation);
+    syncEducation(newEducation);
   };
 
   const handlePresentToggle = (index: number, checked: boolean) => {
@@ -117,22 +134,7 @@ export const EducationSection: React.FC<EducationSectionProps> = ({ data, onChan
     newEducation[index].isPresent = checked;
     newEducation[index].endDate = checked ? null : '';
     setEducation(newEducation);
-  };
-
-  const handleSaveEducation = () => {
-    const validEducation = education
-      .filter(edu => edu.institution.trim() !== '' && edu.degree.trim() !== '')
-      .map(edu => ({
-        institution: edu.institution.trim(),
-        degree: edu.degree.trim(),
-        fieldOfStudy: edu.fieldOfStudy.trim() || undefined,
-        startDate: edu.startDate.trim(),
-        endDate: edu.isPresent ? null : (edu.endDate || null),
-        location: edu.location.trim() || undefined
-      }));
-    if (onChange) {
-      onChange({ education: validEducation });
-    }
+    syncEducation(newEducation);
   };
 
   if (viewMode) {
@@ -269,9 +271,6 @@ export const EducationSection: React.FC<EducationSectionProps> = ({ data, onChan
         <div className="add-education">
           <button onClick={handleAddEducation}>+ Add Education</button>
         </div>
-        <button onClick={handleSaveEducation} className="save-education-btn">
-          Save Education
-        </button>
       </div>
     </section>
   );
